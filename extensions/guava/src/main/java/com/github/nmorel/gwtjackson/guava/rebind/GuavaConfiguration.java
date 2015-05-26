@@ -49,8 +49,6 @@ import com.github.nmorel.gwtjackson.guava.client.deser.OptionalJsonDeserializer;
 import com.github.nmorel.gwtjackson.guava.client.deser.SetMultimapJsonDeserializer;
 import com.github.nmorel.gwtjackson.guava.client.deser.SortedMultisetJsonDeserializer;
 import com.github.nmorel.gwtjackson.guava.client.deser.SortedSetMultimapJsonDeserializer;
-import com.github.nmorel.gwtjackson.guava.client.deser.TreeMultimapJsonDeserializer;
-import com.github.nmorel.gwtjackson.guava.client.deser.TreeMultisetJsonDeserializer;
 import com.github.nmorel.gwtjackson.guava.client.ser.MultimapJsonSerializer;
 import com.github.nmorel.gwtjackson.guava.client.ser.OptionalJsonSerializer;
 import com.google.common.base.Optional;
@@ -83,8 +81,6 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.SortedSetMultimap;
-import com.google.common.collect.TreeMultimap;
-import com.google.common.collect.TreeMultiset;
 
 /**
  * @author Nicolas Morel
@@ -121,7 +117,7 @@ public class GuavaConfiguration extends AbstractConfiguration {
         type( LinkedHashMultiset.class ).serializer( CollectionJsonSerializer.class )
                 .deserializer( LinkedHashMultisetJsonDeserializer.class );
         type( SortedMultiset.class ).serializer( CollectionJsonSerializer.class ).deserializer( SortedMultisetJsonDeserializer.class );
-        type( TreeMultiset.class ).serializer( CollectionJsonSerializer.class ).deserializer( TreeMultisetJsonDeserializer.class );
+        //type( TreeMultiset.class ).serializer( CollectionJsonSerializer.class ).deserializer( TreeMultisetJsonDeserializer.class );
         type( ImmutableMultiset.class ).serializer( CollectionJsonSerializer.class )
                 .deserializer( ImmutableMultisetJsonDeserializer.class );
         type( EnumMultiset.class ).serializer( CollectionJsonSerializer.class ).deserializer( EnumMultisetJsonDeserializer.class );
@@ -140,7 +136,7 @@ public class GuavaConfiguration extends AbstractConfiguration {
         type( LinkedHashMultimap.class ).serializer( MultimapJsonSerializer.class )
                 .deserializer( LinkedHashMultimapJsonDeserializer.class );
         type( SortedSetMultimap.class ).serializer( MultimapJsonSerializer.class ).deserializer( SortedSetMultimapJsonDeserializer.class );
-        type( TreeMultimap.class ).serializer( MultimapJsonSerializer.class ).deserializer( TreeMultimapJsonDeserializer.class );
+        //type( TreeMultimap.class ).serializer( MultimapJsonSerializer.class ).deserializer( TreeMultimapJsonDeserializer.class );
 
         type( ListMultimap.class ).serializer( MultimapJsonSerializer.class ).deserializer( ListMultimapJsonDeserializer.class );
         type( ArrayListMultimap.class ).serializer( MultimapJsonSerializer.class ).deserializer( ArrayListMultimapJsonDeserializer.class );
