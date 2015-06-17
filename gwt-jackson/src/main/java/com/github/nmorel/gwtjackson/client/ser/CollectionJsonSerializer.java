@@ -16,9 +16,10 @@
 
 package com.github.nmorel.gwtjackson.client.ser;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 import com.github.nmorel.gwtjackson.client.JsonSerializationContext;
 import com.github.nmorel.gwtjackson.client.JsonSerializer;
@@ -40,8 +41,8 @@ public class CollectionJsonSerializer<C extends Collection<T>, T> extends JsonSe
      *
      * @return a new instance of {@link CollectionJsonSerializer}
      */
-    public static <C extends Collection<?>> CollectionJsonSerializer<C, ?> newInstance( JsonSerializer<?> serializer ) {
-        return new CollectionJsonSerializer( serializer );
+    public static <C extends Collection<T>, T> CollectionJsonSerializer<C, T> newInstance( JsonSerializer<T> serializer ) {
+        return new CollectionJsonSerializer<>( serializer );
     }
 
     protected final JsonSerializer<T> serializer;

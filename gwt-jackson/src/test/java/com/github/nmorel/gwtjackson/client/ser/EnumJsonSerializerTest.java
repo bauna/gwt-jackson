@@ -28,11 +28,13 @@ public class EnumJsonSerializerTest extends AbstractJsonSerializerTest<EnumTest>
         ONE, TWO, THREE, FOUR
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected JsonSerializer<EnumTest> createSerializer() {
-        return EnumJsonSerializer.<EnumJsonSerializer<EnumTest>>getInstance();
+        return (JsonSerializer<EnumTest>) EnumJsonSerializer.getInstance();
     }
 
+    @Override
     public void testSerializeValue() {
         assertSerialization( "\"ONE\"", EnumTest.ONE );
         assertSerialization( "\"TWO\"", EnumTest.TWO );
