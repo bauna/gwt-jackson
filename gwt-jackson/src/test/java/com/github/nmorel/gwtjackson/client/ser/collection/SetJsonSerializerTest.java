@@ -31,11 +31,13 @@ import com.github.nmorel.gwtjackson.client.ser.StringJsonSerializer;
  */
 public class SetJsonSerializerTest extends AbstractJsonSerializerTest<Set<String>> {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected JsonSerializer<Set<String>> createSerializer() {
-        return IterableJsonSerializer.newInstance( StringJsonSerializer.getInstance() );
+        return (JsonSerializer) IterableJsonSerializer.newInstance( StringJsonSerializer.getInstance() );
     }
 
+    @Override
     public void testSerializeValue() {
         // can't predict the order so we just serialize one element
         assertSerialization( "[\"Hello\"]", new HashSet<String>( Arrays.asList( "Hello", "Hello" ) ) );

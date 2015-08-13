@@ -30,11 +30,13 @@ import com.github.nmorel.gwtjackson.client.ser.StringJsonSerializer;
  */
 public class CollectionJsonSerializerTest extends AbstractJsonSerializerTest<Collection<String>> {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected JsonSerializer<Collection<String>> createSerializer() {
-        return IterableJsonSerializer.newInstance( StringJsonSerializer.getInstance() );
+        return (JsonSerializer) IterableJsonSerializer.newInstance( StringJsonSerializer.getInstance() );
     }
 
+    @Override
     public void testSerializeValue() {
         assertSerialization( "[\"Hello\",\" \",\"World\",\"!\"]", Arrays.asList( "Hello", " ", "World", "!" ) );
         assertSerialization( "[]", Collections.<String>emptyList() );
