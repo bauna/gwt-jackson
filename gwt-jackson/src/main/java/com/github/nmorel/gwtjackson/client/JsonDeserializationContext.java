@@ -61,6 +61,8 @@ public class JsonDeserializationContext extends JsonMappingContext {
 
         protected boolean useSafeEval = true;
 
+        protected boolean adjustDatesToContextTimeZone = true;
+
         /**
          * @deprecated Use {@link JsonDeserializationContext#builder()} instead. This constructor will be made protected in v1.0.
          */
@@ -151,9 +153,23 @@ public class JsonDeserializationContext extends JsonMappingContext {
             return this;
         }
 
+        /**
+         * Feature that specifies whether context provided {@link java.util.TimeZone}
+         * should be used to adjust Date/Time values on deserialization,
+         * even if value itself contains timezone information.
+         * If enabled, contextual <code>TimeZone</code> will essentially override any other
+         * TimeZone information; if disabled, it will only be used if value itself does not
+         * contain any TimeZone information.
+         *
+         */
+        public Builder adjustDatesToContextTimeZone(boolean adjustDatesToContextTimeZone) {
+            this.adjustDatesToContextTimeZone = true;
+            return this;
+        }
+
         public final JsonDeserializationContext build() {
             return new JsonDeserializationContext( failOnUnknownProperties, unwrapRootValue, acceptSingleValueAsArray, wrapExceptions,
-                    useSafeEval );
+                    useSafeEval, adjustDatesToContextTimeZone );
         }
     }
 
@@ -184,13 +200,16 @@ public class JsonDeserializationContext extends JsonMappingContext {
 
     private final boolean useSafeEval;
 
+    private final boolean adjustDatesToContextTimeZone;
+
     private JsonDeserializationContext( boolean failOnUnknownProperties, boolean unwrapRootValue, boolean acceptSingleValueAsArray,
-                                        boolean wrapExceptions, boolean useSafeEval ) {
+                                        boolean wrapExceptions, boolean useSafeEval, boolean adjustDatesToContextTimeZone ) {
         this.failOnUnknownProperties = failOnUnknownProperties;
         this.unwrapRootValue = unwrapRootValue;
         this.acceptSingleValueAsArray = acceptSingleValueAsArray;
         this.wrapExceptions = wrapExceptions;
         this.useSafeEval = useSafeEval;
+        this.adjustDatesToContextTimeZone = adjustDatesToContextTimeZone;
     }
 
     @Override
@@ -224,6 +243,13 @@ public class JsonDeserializationContext extends JsonMappingContext {
      */
     public boolean isUseSafeEval() {
         return useSafeEval;
+    }
+
+    /**
+     * @see Builder#adjustDatesToContextTimeZone(boolean)
+     */
+    public boolean isAdjustDatesToContextTimeZone() {
+        return adjustDatesToContextTimeZone;
     }
 
     public JsonReader newJsonReader( String input ) {
