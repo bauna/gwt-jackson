@@ -157,7 +157,7 @@ public class JsonSerializationContext extends JsonMappingContext {
 
         /**
          * Feature that determines how type <code>char[]</code> is serialized:
-         * when enabled, will be serialized as an explict JSON array (with
+         * when enabled, will be serialized as an explicit JSON array (with
          * single-character Strings as values); when disabled, defaults to
          * serializing them as Strings (which is more compact).
          * <p>
