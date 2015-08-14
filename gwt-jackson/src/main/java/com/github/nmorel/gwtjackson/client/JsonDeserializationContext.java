@@ -61,7 +61,7 @@ public class JsonDeserializationContext extends JsonMappingContext {
 
         protected boolean useSafeEval = true;
 
-        protected boolean adjustDatesToContextTimeZone = true;
+        protected boolean adjustDatesToContextTimeZone = false;
 
         /**
          * @deprecated Use {@link JsonDeserializationContext#builder()} instead. This constructor will be made protected in v1.0.
