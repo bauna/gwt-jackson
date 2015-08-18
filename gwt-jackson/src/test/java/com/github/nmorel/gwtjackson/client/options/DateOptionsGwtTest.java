@@ -54,8 +54,8 @@ public class DateOptionsGwtTest extends GwtJacksonTestCase {
         tester.testDeserializeDatesNotAsTimestamps( createReader( BeanWithDatesMapper.INSTANCE ) );
     }
 
-    public void testDeserializeDatesNotAsTimestampsAndNotAdjustTimeZone() {
-        tester.testDeserializeDatesNotAsTimestampsAndNotAdjustTimeZone(createReader( BeanWithDatesMapper.INSTANCE, JsonDeserializationContext.builder()
-            .adjustDatesToContextTimeZone(false).build() ) );
+    public void testDeserializeDatesNotAsTimestampsAndUseBrowserTimezone() {
+        tester.testDeserializeDatesNotAsTimestampsAndUseBrowserTimezone(createReader( BeanWithDatesMapper.INSTANCE, JsonDeserializationContext.builder()
+            .useBrowserTimezone(true).build() ) );
     }
 }

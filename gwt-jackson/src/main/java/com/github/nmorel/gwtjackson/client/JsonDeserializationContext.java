@@ -63,7 +63,7 @@ public class JsonDeserializationContext extends JsonMappingContext {
 
         protected boolean readUnknownEnumValuesAsNull = false;
 
-        protected boolean adjustDatesToContextTimeZone = true;
+        protected boolean useBrowserTimezone = false;
 
         /**
          * @deprecated Use {@link JsonDeserializationContext#builder()} instead. This constructor will be made protected in v1.0.
@@ -163,24 +163,19 @@ public class JsonDeserializationContext extends JsonMappingContext {
             this.readUnknownEnumValuesAsNull = readUnknownEnumValuesAsNull;
             return this;
         }
-        
+
         /**
-         * Feature that specifies whether context provided {@link java.util.TimeZone}
-         * should be used to adjust Date/Time values on deserialization,
-         * even if value itself contains timezone information.
-         * If enabled, contextual <code>TimeZone</code> will essentially override any other
-         * TimeZone information; if disabled, it will only be used if value itself does not
-         * contain any TimeZone information.
-         *
+         * Feature that specifies whether dates that doesn't contain timezone information
+         * are interpreted using the browser timezone or being relative to UTC (the default).
          */
-        public Builder adjustDatesToContextTimeZone(boolean adjustDatesToContextTimeZone) {
-            this.adjustDatesToContextTimeZone = adjustDatesToContextTimeZone;
+        public Builder useBrowserTimezone(boolean useBrowserTimezone) {
+            this.useBrowserTimezone = useBrowserTimezone;
             return this;
         }
 
         public final JsonDeserializationContext build() {
             return new JsonDeserializationContext( failOnUnknownProperties, unwrapRootValue, acceptSingleValueAsArray, wrapExceptions,
-                    useSafeEval, readUnknownEnumValuesAsNull, adjustDatesToContextTimeZone );
+                    useSafeEval, readUnknownEnumValuesAsNull, useBrowserTimezone );
         }
     }
 
@@ -213,18 +208,18 @@ public class JsonDeserializationContext extends JsonMappingContext {
 
     private final boolean readUnknownEnumValuesAsNull;
 
-    private final boolean adjustDatesToContextTimeZone;
+    private final boolean useBrowserTimezone;
 
     private JsonDeserializationContext( boolean failOnUnknownProperties, boolean unwrapRootValue, boolean acceptSingleValueAsArray,
                                         boolean wrapExceptions, boolean useSafeEval, boolean readUnknownEnumValuesAsNull,
-                                        boolean adjustDatesToContextTimeZone ) {
+                                        boolean useBrowserTimezone ) {
         this.failOnUnknownProperties = failOnUnknownProperties;
         this.unwrapRootValue = unwrapRootValue;
         this.acceptSingleValueAsArray = acceptSingleValueAsArray;
         this.wrapExceptions = wrapExceptions;
         this.useSafeEval = useSafeEval;
         this.readUnknownEnumValuesAsNull = readUnknownEnumValuesAsNull;
-        this.adjustDatesToContextTimeZone = adjustDatesToContextTimeZone;
+        this.useBrowserTimezone = useBrowserTimezone;
     }
 
     @Override
@@ -270,8 +265,8 @@ public class JsonDeserializationContext extends JsonMappingContext {
     /**
      * @see Builder#adjustDatesToContextTimeZone(boolean)
      */
-    public boolean isAdjustDatesToContextTimeZone() {
-        return adjustDatesToContextTimeZone;
+    public boolean isUseBrowserTimezone() {
+        return useBrowserTimezone;
     }
 
     public JsonReader newJsonReader( String input ) {

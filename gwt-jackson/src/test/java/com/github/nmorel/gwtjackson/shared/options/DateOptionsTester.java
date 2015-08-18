@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.github.nmorel.gwtjackson.shared.AbstractTester;
 import com.github.nmorel.gwtjackson.shared.ObjectReaderTester;
 import com.github.nmorel.gwtjackson.shared.ObjectWriterTester;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
 /**
  * @author Nicolas Morel
@@ -40,6 +39,9 @@ public final class DateOptionsTester extends AbstractTester {
 
         @JsonFormat( shape = Shape.STRING, pattern = "/yyyy/MM/dd/" )
         public Date onlyDate;
+
+        @JsonFormat( shape = Shape.STRING, pattern = "/yyyy/MM/dd/ Z" )
+        public Date onlyDateTz;
 
         public java.sql.Date sqlDate;
 
@@ -65,6 +67,7 @@ public final class DateOptionsTester extends AbstractTester {
         BeanWithDates bean = new BeanWithDates();
         bean.date = new Date( 1345304756540l );
         bean.onlyDate = new Date( 1345304756540l );
+        bean.onlyDateTz = new Date( 1345304756540l );
         bean.sqlDate = new java.sql.Date( 1345304756541l );
         bean.sqlTime = new Time( 1345304756542l );
         bean.sqlTimestamp = new Timestamp( 1345304756543l );
@@ -87,7 +90,8 @@ public final class DateOptionsTester extends AbstractTester {
 
         String expected = "{" +
                 "\"date\":1345304756540," +
-                "\"onlyDate\":1345304756540," +
+                "\"onlyDate\":\"/2012/08/18/\"," +
+                "\"onlyDateTz\":\"/2012/08/18/ +0000\"," +
                 "\"sqlDate\":\"" + bean.sqlDate.toString() + "\"," +
                 "\"sqlTime\":\"" + bean.sqlTime.toString() + "\"," +
                 "\"sqlTimestamp\":1345304756543," +
@@ -105,6 +109,7 @@ public final class DateOptionsTester extends AbstractTester {
         String input = "{" +
                 "\"date\":1345304756540," +
                 "\"onlyDate\":1345304756540," +
+                "\"onlyDateTz\":1345304756540," +
                 "\"sqlDate\":\"2012-08-18\"," +
                 "\"sqlTime\":\"15:45:56\"," +
                 "\"sqlTimestamp\":1345304756543," +
@@ -128,7 +133,8 @@ public final class DateOptionsTester extends AbstractTester {
     public void testSerializeDatesNotAsTimestamps( ObjectWriterTester<BeanWithDates> writer ) {
         BeanWithDates bean = new BeanWithDates();
         bean.date = getUTCDate( 2012, 8, 18, 15, 45, 56, 540 );
-        bean.onlyDate = getUTCDate( 2012, 8, 18, 15, 45, 56, 540 );
+        bean.onlyDate = getUTCDate( 2012, 8, 18, 0, 0, 0, 0);
+        bean.onlyDateTz = getUTCDate( 2012, 8, 18, 0, 0, 0, 0);
         bean.sqlDate = new java.sql.Date( getUTCTime( 2012, 8, 18, 15, 45, 56, 541 ) );
         bean.sqlTime = new java.sql.Time( getUTCTime( 2012, 8, 18, 15, 45, 56, 542 ) );
         bean.sqlTimestamp = new java.sql.Timestamp( getUTCTime( 2012, 8, 18, 15, 45, 56, 543 ) );
@@ -152,6 +158,7 @@ public final class DateOptionsTester extends AbstractTester {
         String expected = "{" +
                 "\"date\":\"2012-08-18T15:45:56.540+0000\"," +
                 "\"onlyDate\":\"/2012/08/18/\"," +
+                "\"onlyDateTz\":\"/2012/08/18/ +0000\"," +
                 "\"sqlDate\":\"" + bean.sqlDate.toString() + "\"," +
                 "\"sqlTime\":\"" + bean.sqlTime.toString() + "\"," +
                 "\"sqlTimestamp\":\"2012-08-18T15:45:56.543+0000\"," +
@@ -164,10 +171,12 @@ public final class DateOptionsTester extends AbstractTester {
         assertEquals( expected, writer.write( bean ) );
     }
 
+    @SuppressWarnings("deprecation")
     public void testDeserializeDatesNotAsTimestamps( ObjectReaderTester<BeanWithDates> reader ) {
         String input = "{" +
                 "\"date\":\"2012-08-18T15:45:56.540+0000\"," +
                 "\"onlyDate\":\"/2012/08/18/\"," +
+                "\"onlyDateTz\":\"/2012/08/18/ +0000\"," +
                 "\"sqlDate\":\"2012-08-18\"," +
                 "\"sqlTime\":\"15:45:56\"," +
                 "\"sqlTimestamp\":\"2012-08-18T15:45:56.543+0000\"," +
@@ -175,9 +184,12 @@ public final class DateOptionsTester extends AbstractTester {
                 "}";
 
         BeanWithDates bean = reader.read( input );
+        print(bean);
         assertEquals( new Date( 1345304756540l ), bean.date );
-        assertEquals( DateTimeFormat.getFormat("yyyy/MM/dd Z").parse("2012/08/18 +0000"), bean.onlyDate );
-        assertEquals( getUTCTime( 2012, 8, 18, 0, 0, 0, 0 ), bean.sqlDate.getTime() );
+        Date utcDate = getUTCDate( 2012, 8, 18, 0, 0, 0, 0 );
+        assertEquals( utcDate, bean.onlyDate );
+        assertEquals( utcDate, bean.onlyDateTz );
+        assertEquals( utcDate, bean.sqlDate );
         assertEquals( new Time( 15, 45, 56 ), bean.sqlTime );
         assertEquals( new java.sql.Timestamp( 1345304756543l ), bean.sqlTimestamp );
 
@@ -188,10 +200,17 @@ public final class DateOptionsTester extends AbstractTester {
         // Jackson is not able to deserialize java.sql.* types as string so we don't bother testing it
     }
 
-    public void testDeserializeDatesNotAsTimestampsAndNotAdjustTimeZone( ObjectReaderTester<BeanWithDates> reader ) {
+    void print(BeanWithDates bean) {
+        System.out.println("onlyDate   : " + bean.onlyDate);
+        System.out.println("onlyDate Tz: " + bean.onlyDateTz);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void testDeserializeDatesNotAsTimestampsAndUseBrowserTimezone( ObjectReaderTester<BeanWithDates> reader ) {
         String input = "{" +
             "\"date\":\"2012-08-18T15:45:56.540+0000\"," +
             "\"onlyDate\":\"/2012/08/18/\"," +
+            "\"onlyDateTz\":\"/2012/08/18/ +0000\"," +
             "\"sqlDate\":\"2012-08-18\"," +
             "\"sqlTime\":\"15:45:56\"," +
             "\"sqlTimestamp\":\"2012-08-18T15:45:56.543+0000\"," +
@@ -199,10 +218,13 @@ public final class DateOptionsTester extends AbstractTester {
             "}";
 
         BeanWithDates bean = reader.read( input );
+        print(bean);
         assertEquals( new Date( 1345304756540l ), bean.date );
-        Date dateUsingDefaultTimeZone = DateTimeFormat.getFormat("yyyy/MM/dd").parse("2012/08/18");
-        assertEquals( dateUsingDefaultTimeZone, bean.onlyDate );
-        assertEquals( dateUsingDefaultTimeZone, bean.sqlDate );
+        Date utc = getUTCDate( 2012, 8, 18, 0, 0, 0, 0 );
+        Date currentTz = new Date(112, 7, 18);
+        assertEquals( currentTz, bean.onlyDate );
+        assertEquals( utc, bean.onlyDateTz );
+        assertEquals( currentTz, bean.sqlDate );
         assertEquals( new Time( 15, 45, 56 ), bean.sqlTime );
         assertEquals( new java.sql.Timestamp( 1345304756543l ), bean.sqlTimestamp );
 
