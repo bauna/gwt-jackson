@@ -42,7 +42,7 @@ public class JsonDeserializationContext extends JsonMappingContext {
      * <pre>
      * {@code
      *
-     * <replace-with class=""your.package.YourBuilder">
+     * <replace-with class="your.package.YourBuilder">
      *   <when-type-assignable class="com.github.nmorel.gwtjackson.client.JsonDeserializationContext.Builder" />
      * </replace-with>
      *
